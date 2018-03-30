@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <map>
 using namespace std;
-int a,b,c;    
+int a,b,c,i=0;    
 
-map< int,int>mp;int i=0;
+map< int,int>mp;
 map< int,int>::iterator it;
 
 int main(){

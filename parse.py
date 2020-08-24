@@ -233,7 +233,7 @@ class FacebookLogin():
       
 
 def run(link,message):
-    fb_login = FacebookLogin(email='+998936654143', password='123698745', browser='Firefox')
+    fb_login = FacebookLogin(email='+', password='', browser='Firefox')
     fb_login.login()
 
     fr=fb_login.get(link)

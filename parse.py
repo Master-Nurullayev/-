@@ -4,6 +4,7 @@ import os
 import requests
 import telebot
 import codecs
+import geckodriver_autoinstaller
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from webdriver_manager.firefox import GeckoDriverManager
@@ -25,7 +26,7 @@ class FacebookLogin():
         self.email = email
         self.password = password
         if browser == 'Chrome':           
-            self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
+            #self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
             options = Options()
             options.binary_location = "C:\\path\\to\\chrome.exe"    #chrome binary location specified here
             options.add_argument("--start-maximized") #open Browser in maximized mode
@@ -35,8 +36,9 @@ class FacebookLogin():
             options.add_experimental_option('useAutomationExtension', False)
             driver = webdriver.Chrome(options=options, executable_path=r'/usr/bin/chromedriver')
         elif browser == 'Firefox':
-            self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
-            #self.driver = webdriver.Chrome()
+            geckodriver_autoinstaller.install()
+            #self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+            self.driver = webdriver.Firefox()
         self.driver.get(LOGIN_URL)
         time.sleep(1) 
  

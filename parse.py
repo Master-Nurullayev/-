@@ -40,6 +40,7 @@ class FacebookLogin():
             #self.driver = webdriver.Firefox()
             self.driver = webdriver.PhantomJS()
         self.driver.get(LOGIN_URL)
+        print("maste1r")
         time.sleep(1) 
  
  
@@ -53,7 +54,7 @@ class FacebookLogin():
  
         login_button = self.driver.find_element_by_id('loginbutton')#signup-button
         login_button.click() 
- 
+        print("master")
         time.sleep(1)
     
 

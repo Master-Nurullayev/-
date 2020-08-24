@@ -4,14 +4,14 @@ import os
 import requests
 import telebot
 import codecs
-import geckodriver_autoinstaller
+import warnings
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
 
-
+warnings.filterwarnings('ignore')
   
 FILE = 'friends.csv'
 bot = telebot.TeleBot("1017543590:AAEluQgSWsJ7viadUhOrAD2XkxRXGAYZ4Bo")
@@ -36,9 +36,9 @@ class FacebookLogin():
             options.add_experimental_option('useAutomationExtension', False)
             driver = webdriver.Chrome(options=options, executable_path=r'/usr/bin/chromedriver')
         elif browser == 'Firefox':
-            geckodriver_autoinstaller.install()
             #self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
-            self.driver = webdriver.Firefox()
+            #self.driver = webdriver.Firefox()
+            self.driver = webdriver.PhantomJS()
         self.driver.get(LOGIN_URL)
         time.sleep(1) 
  
@@ -243,15 +243,16 @@ class FacebookLogin():
       
 
 def run(link,message):
-    fb_login = FacebookLogin(email='+', password='', browser='Chrome')
+    fb_login = FacebookLogin(email='+', password='', browser='Firefox')
     fb_login.login()
 
     fr=fb_login.get(link)
-
+    
     fr=fb_login.get_post(fr,link)
 
     fr=fb_login.get_about(fr,link)
-
+    for item in fr:
+      print(item)
     fb_login.save_file(fr,FILE)
     f=open(FILE)
     bot.send_document(message.chat.id,f)

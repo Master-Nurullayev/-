@@ -26,6 +26,14 @@ class FacebookLogin():
         self.password = password
         if browser == 'Chrome':           
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
+            options = Options()
+            options.binary_location = "C:\\path\\to\\chrome.exe"    #chrome binary location specified here
+            options.add_argument("--start-maximized") #open Browser in maximized mode
+            options.add_argument("--no-sandbox") #bypass OS security model
+            options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_experimental_option('useAutomationExtension', False)
+            driver = webdriver.Chrome(options=options, executable_path=r'/usr/bin/chromedriver')
         elif browser == 'Firefox':
             self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
             #self.driver = webdriver.Chrome()
@@ -233,7 +241,7 @@ class FacebookLogin():
       
 
 def run(link,message):
-    fb_login = FacebookLogin(email='+', password='', browser='Firefox')
+    fb_login = FacebookLogin(email='+', password='', browser='Chrome')
     fb_login.login()
 
     fr=fb_login.get(link)

@@ -186,8 +186,9 @@ class FacebookLogin():
         while int(count.text) if len(count) > 0 else k >=len(friends):
             initial = self.driver.page_source
             soup=BeautifulSoup(initial,"html.parser")
+            time.sleep(1)
             self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-  
+            
             items=soup.findAll('a',{'class':'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl gmql0nx0 gpro0wi8'})                      
             for item in items:
                 friends.append(item.text)

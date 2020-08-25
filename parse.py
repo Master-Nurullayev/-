@@ -4,16 +4,15 @@ import os
 import requests
 import telebot
 import codecs
-import warnings
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
 
-warnings.filterwarnings('ignore')
+
   
-FILE = 'friends.csv'
+FILE = 'facebook.csv'
 bot = telebot.TeleBot("1017543590:AAEluQgSWsJ7viadUhOrAD2XkxRXGAYZ4Bo")
 
 LOGIN_URL = 'https://www.facebook.com/login.php'
@@ -26,21 +25,11 @@ class FacebookLogin():
         self.email = email
         self.password = password
         if browser == 'Chrome':           
-            #self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
-            options = Options()
-            options.binary_location = "C:\\path\\to\\chrome.exe"    #chrome binary location specified here
-            options.add_argument("--start-maximized") #open Browser in maximized mode
-            options.add_argument("--no-sandbox") #bypass OS security model
-            options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
-            options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            options.add_experimental_option('useAutomationExtension', False)
-            driver = webdriver.Chrome(options=options, executable_path=r'/usr/bin/chromedriver')
+            self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
         elif browser == 'Firefox':
-            #self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
-            #self.driver = webdriver.Firefox()
-            self.driver = webdriver.PhantomJS()
+            self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+            #self.driver = webdriver.Chrome()
         self.driver.get(LOGIN_URL)
-        print("maste1r")
         time.sleep(1) 
  
  
@@ -54,18 +43,30 @@ class FacebookLogin():
  
         login_button = self.driver.find_element_by_id('loginbutton')#signup-button
         login_button.click() 
-        print("master")
+ 
         time.sleep(1)
     
 
 
     def save_file(self, friends,path):
+        self.driver.quit()
         with open(path, 'w', newline='',encoding="utf8") as file:
             writer = csv.writer(file, delimiter=';')
-            writer.writerow([u'Друзья', u'Link',u'Образование',u'Места проживания',u'Контактная информация',u'Основная информация',u'Семейное положение',u'post data',u'post link'])
+            writer.writerow([u'Друзья', u'Link',u'Образование',u'Места проживания',u'Контактная информация',u'Основная информация',u'Семейное положение',])
             for item in friends:
-                writer.writerow([ item['Друзья'], item['link'],item['Образование'],item['Места проживания'], item['Контактная информация'],item['Основная информация'], item['Семейное положение'],item['post data'],item['post link'],])
-            
+                writer.writerow([ item['Друзья'], item['link'],item['Образование'],item['Места проживания'], item['Контактная информация'],item['Основная информация'], item['Семейное положение']])
+
+    def save_post(self, postttt,path):
+        self.driver.quit()
+        with open(path, 'w', newline='',encoding="utf8") as file:
+            writer = csv.writer(file, delimiter=';')
+            writer.writerow([])
+            writer.writerow([])
+            writer.writerow(['postlarning sanasi', 'postlarning link'])
+            for item in postttt:
+                writer.writerow([ item['post data'],item['link']])
+             
+
 
 
     def get_about(self,friends,url):
@@ -131,7 +132,7 @@ class FacebookLogin():
         hh=url.replace('www', 'm')
 
         p=[]
-        dp=[]
+        
         self.driver.get(hh)
         time.sleep(2)
 
@@ -158,45 +159,12 @@ class FacebookLogin():
                 link=s.findAll('a')
                 
                 p.append({
-                    'link':'https://m.facebook.com'+link[2].get('href')
-                })
-                dp.append({
+                    'link':'https://m.facebook.com'+link[2].get('href') ,
                     'post data':s.findAll('abbr')[0].text if len(s.findAll('abbr')) != 0 else " "
                 })
-                #print()
             
-            #_55wo _56bf _5rgl
-        if len(friends)<len(dp):
-            j=0
-            for item in dp:
-                if j<=len(friends)-1:
-                    item['Друзья']=friends[j]['Друзья']
-                    item['link']=friends[j]['link']
-                    item['post link']=p[j]['link']
-                else:
-                    item['Друзья']=" "
-                    item['link']=" "
-                    item['post link']=p[j]['link']
-                j=j+1
-            return dp
-        else:
-            j=0
-            for item in friends:
-                if j<=len(p)-1:
-                    item['post data']=p[j]['link']
-                else:
-                    item['post data']=" "
-                j=j+1
-
-            j=0
-            for item in friends:
-                if j<=len(dp)-1:
-                    item['post link']=dp[j]['data']
-                else:
-                    item['post link']=" "
-                j=j+1
-            
-            return friends
+               
+            return p
 
 
 
@@ -248,13 +216,13 @@ def run(link,message):
     fb_login.login()
 
     fr=fb_login.get(link)
-    
-    fr=fb_login.get_post(fr,link)
+
+    postt=fb_login.get_post(fr,link)
 
     fr=fb_login.get_about(fr,link)
-    for item in fr:
-      print(item)
+
     fb_login.save_file(fr,FILE)
+    fb_login.save_post(postt,FILE)
     f=open(FILE)
     bot.send_document(message.chat.id,f)
 
@@ -273,3 +241,4 @@ def main(message):
         bot.send_message(message.chat.id,"Sory only Facebook account link!!!")
 
 bot.polling()
+
